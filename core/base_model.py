@@ -36,6 +36,11 @@ class BaseModel():
         self.results_dict = CustomResult([],[]) # {"name":[], "result":[]}
 
     def train(self):
+        print(self.epoch, self.opt['train']['n_epoch'])
+        print(self.iter , self.opt['train']['n_iter'])
+        for item_opt in self.opt['model']['which_networks']:
+            print(item_opt)
+        print(self.opt['model']['optimizers'])
         while self.epoch <= self.opt['train']['n_epoch'] and self.iter <= self.opt['train']['n_iter']:
             self.epoch += 1
             if self.opt['distributed']:
@@ -119,7 +124,7 @@ class BaseModel():
         self.logger.info('Loading pretrained model from [{:s}] ...'.format(model_path))
         if isinstance(network, nn.DataParallel) or isinstance(network, nn.parallel.DistributedDataParallel):
             network = network.module
-        network.load_state_dict(torch.load(model_path, map_location = lambda storage, loc: Util.set_device(storage)), strict=strict)
+        network.load_state_dict(torch.load(model_path, map_location = lambda storage, loc: Util.set_device(storage), weights_only=True), strict=strict)
 
     def save_training_state(self):
         """ saves training state during training, only work on GPU 0 """
@@ -149,7 +154,7 @@ class BaseModel():
             return
 
         self.logger.info('Loading training state for [{:s}] ...'.format(state_path))
-        resume_state = torch.load(state_path, map_location = lambda storage, loc: self.set_device(storage))
+        resume_state = torch.load(state_path, map_location = lambda storage, loc: self.set_device(storage), weights_only=True)
         
         resume_optimizers = resume_state['optimizers']
         resume_schedulers = resume_state['schedulers']

@@ -36,6 +36,7 @@ def main_worker(gpu, ngpus_per_node, opt):
     '''set networks and dataset'''
     phase_loader, val_loader = define_dataloader(phase_logger, opt) # val_loader is None if phase is test.
     networks = [define_network(phase_logger, opt, item_opt) for item_opt in opt['model']['which_networks']] # return class: network.py 的 Network
+    
 
     ''' set metrics, loss, optimizer and  schedulers '''
     metrics = [define_metric(phase_logger, item_opt) for item_opt in opt['model']['which_metrics']] # return function: loss.py 裡的 mse_loss

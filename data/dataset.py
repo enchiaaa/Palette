@@ -97,7 +97,8 @@ class InpaintDataset(data.Dataset):
 @staticmethod
 def myMask():
     # 假設眼睛位置為 (x1, y1, x2, y2)
-    x1, y1, x2, y2 = 64, 70, 192, 140  # 假設眼睛的位置在 (64, 64) 到 (192, 128)
+    # x1, y1, x2, y2 = 64, 70, 192, 140  # 假設眼睛的位置在 (64, 64) 到 (192, 128)
+    x1, y1, x2, y2 = 50, 80, 200, 160
     # 創建一個全是 0 的遮罩
     mask = np.ones((256, 256), dtype=np.uint8)
     # 在指定的眼睛區域設置為 1

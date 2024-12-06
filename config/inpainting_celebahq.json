@@ -1,7 +1,7 @@
 {
     "name": "inpainting_celebahq", // experiments name
     "gpu_ids": [0], // gpu ids list, default is single 0
-    "seed" : -1, // random seed, seed <0 represents randomization not used 
+    "seed" : 42, // random seed, seed <0 represents randomization not used 
     "finetune_norm": false, // find the parameters to optimize
 
     "path": { //set every part file path
@@ -10,7 +10,7 @@
         "tb_logger": "tb_logger", // path of tensorboard logger
         "results": "results",
         "checkpoint": "checkpoint",
-        "resume_state": "./experiments/200_Network.pth" 
+        "resume_state": "experiments/train_inpainting_celebahq_241206_010202/checkpoint/35"
         // "resume_state": null // ex: 100, loading .state  and .pth from given epoch and iteration
     },
 
@@ -19,7 +19,7 @@
             "which_dataset": {  // import designated dataset using arguments 
                 "name": ["data.dataset", "InpaintDataset"], // import Dataset() class / function(not recommend) from data.dataset.py (default is [data.dataset.py])
                 "args":{ // arguments to initialize dataset
-                    "data_root": "./celeba_hq_256/train",
+                    "data_root": "celeba_hq_256/train",
                     "data_len": -1,
                     "mask_config": {
                         "mask_mode": "myMask"
@@ -56,8 +56,10 @@
             },
             "dataloader":{
                 "args":{
-                    "batch_size": 8,
-                    "num_workers": 4,
+                    // "batch_size": 8,
+                    // "num_workers": 4,
+                    "batch_size": 1,
+                    "num_workers": 1,
                     "pin_memory": true
                 }
             }
@@ -76,7 +78,8 @@
                     "ema_decay": 0.9999
                 },
                 "optimizers": [
-                    { "lr": 5e-5, "weight_decay": 0}
+                    // { "lr": 5e-5, "weight_decay": 0}
+                    { "lr": 1e-5, "weight_decay": 1e-4}
                 ]
             }
         }, 
@@ -103,8 +106,9 @@
                         ],
                         "num_head_channels": 32,
                         "res_blocks": 2,
-                        "dropout": 0.2,
-                        "image_size": 256
+                        // "dropout": 0.2,
+                        "dropout": 0.4,
+                        "image_size": 2
                     },
                     "beta_schedule": {
                         "train": {
@@ -116,7 +120,7 @@
                         },
                         "test": {
                             "schedule": "linear",
-                            "n_timestep": 10000,
+                            "n_timestep": 1000,
                             "linear_start": 1e-4,
                             "linear_end": 0.09
                         }
@@ -132,11 +136,13 @@
         ]
     },
 
-    "train": { // arguments for basic training
-        "n_epoch": 10, // max epochs, not limited now
-        "n_iter": 1000, // max interations
+    "train": { // arguments for basic training.
+        "n_epoch": 1e4, // max epochs, not limited now
+        "n_iter": 1e8, // max interations
+        // "n_epoch": 1e8, // max epochs, not limited now
+        // "n_iter": 1e8, // max interations
         "val_epoch": 5, // valdation every specified number of epochs
-        "save_checkpoint_epoch": 10,
+        "save_checkpoint_epoch": 1,
         "log_iter": 1e3, // log every specified number of iterations
         "tensorboard" : true // tensorboardX enable
     },
